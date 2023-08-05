@@ -1,7 +1,7 @@
-package com.examly.springapp;
+package com.examly.springapp; // Update the package name
 
-import com.example.carrentalmanagement.model.Car;
-import com.example.carrentalmanagement.repository.CarRepository;
+import com.examly.springapp.model.Car; // Update the import
+import com.examly.springapp.repository.CarRepository; // Update the import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,6 @@ public class CarController {
 
     @Autowired
     private CarRepository carRepository;
-
     // Add a new Car
     @PostMapping("/saveCar")
     public ResponseEntity<String> saveCar(@RequestBody Car car) {

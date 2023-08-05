@@ -1,6 +1,6 @@
-package com.examly.springapp;
+package com.examly.springapp; // Update the package name
 
-import com.example.carrentalmanagement.model.Car;
+import com.examly.springapp.model.Car; // Update the import
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.Map;
 
 @Repository
 public class CarRepository {
+
     private final Map<String, Car> cars = new HashMap<>();
 
     public void saveCar(Car car) {
