@@ -7,7 +7,6 @@ public class Car {
     private String status;
 
     public Car() {
-        // Default constructor
     }
 
     public Car(String carId, String carModel, String carNo, String status) {

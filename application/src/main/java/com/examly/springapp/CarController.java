@@ -1,64 +1,61 @@
-package com.examly.springapp; // Update the package name
+package com.examly.springapp;
 
-import com.examly.springapp.model.Car; // Update the import
-import com.examly.springapp.repository.CarRepository; // Update the import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CarController {
 
     @Autowired
-    private CarRepository carRepository;
-    // Add a new Car
+    private CarService carService;
+
     @PostMapping("/saveCar")
     public ResponseEntity<String> saveCar(@RequestBody Car car) {
-        carRepository.saveCar(car);
+        carService.saveCar(car);
         return ResponseEntity.ok("Car added successfully");
     }
 
-    // Edit a Car Details
     @PostMapping("/editCar")
     public ResponseEntity<String> editCar(@RequestParam String id, @RequestBody Car car) {
-        Car existingCar = carRepository.getCarById(id);
-        if (existingCar != null) {
-            existingCar.setCarModel(car.getCarModel());
-            existingCar.setCarNo(car.getCarNo());
-            existingCar.setStatus(car.getStatus());
+        Optional<Car> existingCar = carService.getCarById(id);
+        if (existingCar.isPresent()) {
+            Car editedCar = existingCar.get();
+            editedCar.setCarModel(car.getCarModel());
+            editedCar.setCarNo(car.getCarNo());
+            editedCar.setStatus(car.getStatus());
+            carService.saveCar(editedCar);
             return ResponseEntity.ok("Car details updated successfully");
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // Delete a Car
     @GetMapping("/deleteCar")
     public ResponseEntity<String> deleteCar(@RequestParam String id) {
-        Car existingCar = carRepository.getCarById(id);
-        if (existingCar != null) {
-            carRepository.deleteCar(id);
+        Optional<Car> existingCar = carService.getCarById(id);
+        if (existingCar.isPresent()) {
+            carService.deleteCar(id);
             return ResponseEntity.ok("Car deleted successfully");
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // Get All Cars
     @GetMapping("/getCars")
     public ResponseEntity<List<Car>> getCars() {
-        List<Car> cars = carRepository.getAllCars();
+        List<Car> cars = carService.getAllCars();
         return ResponseEntity.ok(cars);
     }
 
-    // Get Car By ID
     @GetMapping("/getCar")
     public ResponseEntity<Car> getCarById(@RequestParam String id) {
-        Car car = carRepository.getCarById(id);
-        if (car != null) {
-            return ResponseEntity.ok(car);
+        Optional<Car> car = carService.getCarById(id);
+        if (car.isPresent()) {
+            return ResponseEntity.ok(car.get());
         } else {
             return ResponseEntity.notFound().build();
         }
