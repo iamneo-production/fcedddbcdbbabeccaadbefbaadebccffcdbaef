@@ -1,22 +1,15 @@
 package com.examly.springapp;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
 public class Car {
-
-    @Id
     private String carId;
     private String carModel;
     private String carNo;
     private String status;
 
-    // Default constructor (required by JPA)
     public Car() {
+        // Default constructor
     }
 
-    // Parameterized constructor
     public Car(String carId, String carModel, String carNo, String status) {
         this.carId = carId;
         this.carModel = carModel;
@@ -24,7 +17,6 @@ public class Car {
         this.status = status;
     }
 
-    // Getters and Setters
     public String getCarId() {
         return carId;
     }
@@ -56,5 +48,6 @@ public class Car {
     public void setStatus(String status) {
         this.status = status;
     }
-}
 
+    // Add other methods or overrides as needed
+}

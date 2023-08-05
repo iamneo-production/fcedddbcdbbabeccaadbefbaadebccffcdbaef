@@ -1,68 +1,67 @@
 package com.examly.springapp;
 
-import com.example.model.Car;
-import com.example.service.CarService;
+import com.example.carrentalmanagement.model.Car;
+import com.example.carrentalmanagement.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class CarController {
 
-    private final CarService carService;
-
     @Autowired
-    public CarController(CarService carService) {
-        this.carService = carService;
-    }
+    private CarRepository carRepository;
 
+    // Add a new Car
     @PostMapping("/saveCar")
-    public ResponseEntity<Car> addNewCar(@RequestBody Car car) {
-        Car savedCar = carService.saveCar(car);
-        return new ResponseEntity<>(savedCar, HttpStatus.OK);
+    public ResponseEntity<String> saveCar(@RequestBody Car car) {
+        carRepository.saveCar(car);
+        return ResponseEntity.ok("Car added successfully");
     }
 
-    @GetMapping("/getCars")
-    public ResponseEntity<List<Car>> getAllCars() {
-        List<Car> cars = carService.getAllCars();
-        return new ResponseEntity<>(cars, HttpStatus.OK);
-    }
-
-    @GetMapping("/getCar")
-    public ResponseEntity<Car> getCarById(@RequestParam("carId") String carId) {
-        Optional<Car> car = carService.getCarById(carId);
-        return car.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
+    // Edit a Car Details
     @PostMapping("/editCar")
-    public ResponseEntity<Car> editCarDetails(@RequestParam("id") String carId, @RequestBody Car updatedCar) {
-        Optional<Car> existingCar = carService.getCarById(carId);
-        if (existingCar.isPresent()) {
-            Car carToUpdate = existingCar.get();
-            carToUpdate.setCarModel(updatedCar.getCarModel());
-            carToUpdate.setCarNo(updatedCar.getCarNo());
-            carToUpdate.setStatus(updatedCar.getStatus());
-
-            Car savedCar = carService.saveCar(carToUpdate);
-            return new ResponseEntity<>(savedCar, HttpStatus.OK);
+    public ResponseEntity<String> editCar(@RequestParam String id, @RequestBody Car car) {
+        Car existingCar = carRepository.getCarById(id);
+        if (existingCar != null) {
+            existingCar.setCarModel(car.getCarModel());
+            existingCar.setCarNo(car.getCarNo());
+            existingCar.setStatus(car.getStatus());
+            return ResponseEntity.ok("Car details updated successfully");
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
+    // Delete a Car
     @GetMapping("/deleteCar")
-    public ResponseEntity<String> deleteCar(@RequestParam("id") String carId) {
-        Optional<Car> car = carService.getCarById(carId);
-        if (car.isPresent()) {
-            carService.deleteCar(carId);
-            return new ResponseEntity<>("Car deleted successfully", HttpStatus.OK);
+    public ResponseEntity<String> deleteCar(@RequestParam String id) {
+        Car existingCar = carRepository.getCarById(id);
+        if (existingCar != null) {
+            carRepository.deleteCar(id);
+            return ResponseEntity.ok("Car deleted successfully");
         } else {
-            return new ResponseEntity<>("Car not found", HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Get All Cars
+    @GetMapping("/getCars")
+    public ResponseEntity<List<Car>> getCars() {
+        List<Car> cars = carRepository.getAllCars();
+        return ResponseEntity.ok(cars);
+    }
+
+    // Get Car By ID
+    @GetMapping("/getCar")
+    public ResponseEntity<Car> getCarById(@RequestParam String id) {
+        Car car = carRepository.getCarById(id);
+        if (car != null) {
+            return ResponseEntity.ok(car);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }
