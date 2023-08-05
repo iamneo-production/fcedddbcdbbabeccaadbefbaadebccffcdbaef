@@ -48,5 +48,4 @@ public class Car {
         this.status = status;
     }
 
-    // Add other methods or overrides as needed
 }
